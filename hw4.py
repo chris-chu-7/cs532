@@ -68,6 +68,8 @@ print(find_y_value())
 #Finding the percent of training labels incorrectly classified
 
 classification_9 = find_y_value()
+data = loadmat('face_emotion_data.mat')
+
 result_y = data['y']
 
 i = 0
@@ -112,5 +114,54 @@ print("\nFor 3 features, " + str(num_errors_3) + " labels are incorrectly classi
 #of labels are incorrectly classified using 3 features. 
 
 
+#Part F
 
+
+
+print("\n Classifier Weight Design Matrix: \n\n" + str(cross_mat))
+
+
+
+def cross_validate(begin, end):
+    #Performing Cross-Validation 8 times: 
+    cross_mat = np.array(data['X'][begin:end])
+    cv_data = loadmat('face_emotion_data.mat')
+    cv_data_x_points = cross_mat
+    cv_data_y_points = np.array(data['y'][begin:end])
+    weights = np.linalg.inv(np.matmul(cv_data_x_points.transpose(), cv_data_x_points))
+    weights = np.matmul(weights, cv_data_x_points.transpose())
+    weights = np.matmul(weights, cv_data_y_points)
+
+    print("\n Here are the weights for a cross-validation set: ")
+    print(weights)
+
+    result_matrix = np.matmul(cv_data_x_points, weights)
+
+    num_errors = 0
+    i = 0
+
+    for entry in cv_data_y_points:
+        if(entry > 0):
+            if(result_matrix[i] < 0):
+                num_errors = num_errors + 1
+            i = i + 1
+        else:
+            if(result_matrix[i] > 0):
+                num_errors = num_errors + 1
+            i = i + 1
+
+    print("\n" + str(num_errors_3) + " labels are incorrectly classified out of " + str(i) + " = " + str(num_errors_3 / 16) + ".")
+    return 
+    
+
+cross_validate(0, 55)
+cross_validate(8, 63)
+cross_validate(16, 71)
+cross_validate(24, 79)
+cross_validate(32, 87)
+cross_validate(40, 95)
+cross_validate(48, 103)
+cross_validate(56, 111)
+
+print("Since all the error rates are 4/55 the performance estimate is " + str(100 * (1 - (4/55))) + "%.")
 
