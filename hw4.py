@@ -1,25 +1,39 @@
 #CS 532 Assignment 4
 
+
+
 from scipy.io import loadmat
 import numpy as np
 
+
+
 #Part A
 
-
 #Least Squares Classifier Training. w = (X^T X)^(-1)X^T y
-def findweights():
+def find_weights():
     data = loadmat('face_emotion_data.mat')
     data_x_points = data['X']
     data_y_points = data['y']
     weights = np.linalg.inv(data_x_points.transpose()@data_x_points)@data_x_points.transpose()@data_y_points
     return weights
 
-print(findweights())
+#find the result of the least squares classifier.
+def find_y_value():
+    data = loadmat('face_emotion_data.mat')
+    data_x_points = data['X']
+    data_y_points = data['y']
+    return data_x_points@weights
+    
+
+print("\nWeights: ")
+print(find_weights())
+
+print("\nResults: ")
+print(find_y_value())
 
 
 
 #Part B
-
 
 #There are 9 features in the corresponding feature vector to help decide on facial expression sentiments. The
 #feature vector is represented the following way:
@@ -35,5 +49,37 @@ print(findweights())
 
 
 
+#Part C
+
+#Each column is normalized to scale. As a result, I strongly believe that feature 1 is the most important feature, since it
+#has the most weight out of any feature and therefore has the greatest affect on wheather a person is smiling or not.
 
 
+
+#Part D
+
+#Classifier based on 3 of the 9 features. These features are feature 1, feature 3 and feature 4, since they contain the 
+#greatest amounts of magnitude. I make a new matrix concatenating only 3 features instead of 9, same number of rows, with 
+#these weights. Then, I multiply the values of this matrix together. 
+
+#Part E
+
+#Finding the percent of training labels incorrectly classified
+
+classification_9 = find_y_value()
+result_y = data['y']
+
+i = 0
+num_errors_9 = 0
+
+for entry in result_y:
+    if(entry > 0):
+        if(classification_9[i] < 0):
+            num_errors_9 = num_errors_9 + 1
+        i = i + 1
+    else:
+        if(classification_9[i] > 0):
+            num_errors_9 = num_errors_9 + 1
+        i = i + 1
+         
+print("\nFor 9 features, " + str(num_errors_9) + " labels are incorrectly classified out of " + str(i) + ".")
