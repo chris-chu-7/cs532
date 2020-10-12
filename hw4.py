@@ -22,6 +22,7 @@ def find_y_value():
     data = loadmat('face_emotion_data.mat')
     data_x_points = data['X']
     data_y_points = data['y']
+    weights = np.linalg.inv(data_x_points.transpose()@data_x_points)@data_x_points.transpose()@data_y_points
     return data_x_points@weights
     
 
@@ -58,7 +59,7 @@ print(find_y_value())
 
 #Part D
 
-#Classifier based on 3 of the 9 features. These features are feature 1, feature 3 and feature 4, since they contain the 
+#Classifier based on 3 of the 9 features. These features are feature 0, feature 2 and feature 3, since they contain the 
 #greatest amounts of magnitude. I make a new matrix concatenating only 3 features instead of 9, same number of rows, with 
 #these weights. Then, I multiply the values of this matrix together. 
 
@@ -83,3 +84,33 @@ for entry in result_y:
         i = i + 1
          
 print("\nFor 9 features, " + str(num_errors_9) + " labels are incorrectly classified out of " + str(i) + ".")
+
+#now I only want to take rows 0, 2, and 3. I do this by trying to extract/concatenate these rows and put them in a matrix
+result_x = np.array(data['X']).transpose()
+result_x_3 = np.array([result_x[0], result_x[2], result_x[3]])
+result_weight = find_weights()
+result_weight_3 = np.array([result_weight[0], result_weight[2], result_weight[3]])
+result_mat_3 = np.matmul(np.array(result_x_3).transpose() , result_weight_3)
+print(result_mat_3)
+
+i = 0
+num_errors_3 = 0
+
+for entry in result_y:
+    if(entry > 0):
+        if(result_mat_3[i] < 0):
+            num_errors_3 = num_errors_3 + 1
+        i = i + 1
+    else:
+        if(result_mat_3[i] > 0):
+            num_errors_3 = num_errors_9 + 1
+        i = i + 1
+
+print("\nFor 3 features, " + str(num_errors_3) + " labels are incorrectly classified out of " + str(i) + ".")
+
+#This means that 2.34% training labels are incorrecly classified using 9 features and 3.12% 
+#of labels are incorrectly classified using 3 features. 
+
+
+
+
