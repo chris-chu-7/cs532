@@ -28,5 +28,12 @@ print(findweights())
 
 #To find a solution to this particular problem, I must perform the following:
 
+#result = x^T(w) 
+
+#I then see if the result is positive or negative to perform the classification. If the result is positive, then
+#the person is classified as "Happy". Otherwise, the person is classified as "angry".
+
+
+
 
 
